@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# Copyright (C) 2014 OpenMediaVault Plugin Developers
+#
+# This file is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this file. If not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+#############################
+RUN_AS="mediabrowser"
+RUN_GRP="users"
+SERVICE="mediabrowser"
+#############################
+
+SERVICE_XPATH=/config/services/mediabrowser
+
+#############################
+SERVICE_XPATH_ENABLE="${SERVICE_XPATH}/enable"
+
+LINK="https://www.dropbox.com/s/07hh1g4x9xo28jb/MBServer.Mono.zip?dl=1"
+FILE="/tmp/MBServer.Mono.zip"
+INSTALL_DIR="/opt/${SERVICE}"
+
+#MB_HOME="$(getent passwd ${SERVICE} | cut -d: -f6)"
+
+# Enable/disable service
+#if [ "$(omv_config_get "/config/services/mediabrowser/enable")" != "1" ]; then
+#    exit 0
+#fi
+
+install()
+{
+    echo "Installing Media Browser..."
+#	echo '. /opt/mono/env.sh' >> ~/.bash_profile
+    mkdir -p ${INSTALL_DIR}
+    chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+
+    if [ -f "${FILE}" ]; then
+        rm -f ${FILE}
+    fi
+	echo "Downloading..."
+    wget ${LINK} -O ${FILE}
+
+    echo "Extracting..."
+    unzip ${FILE} -d ${INSTALL_DIR}
+    rm -f ${FILE}
+
+    chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+
+	echo "Calling insserv..."
+    insserv ${SERVICE}
+	echo "...ok"
+
+    if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "1" ]; then
+        update-rc.d ${SERVICE} disable
+    fi
+
+#    chown -R ${RUN_AS}:${RUN_GRP} "${MB_HOME}"
+}
+
+case $2 in
+    install)
+        if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "1" ]; then
+            install
+        fi
+    ;;
+
+    update)
+        install
+    ;;
+
+    *)
+    ;;
+esac
+
+if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "0" ]; then
+#    config
+    invoke-rc.d ${SERVICE} start
+fi
+#############################
+
+exit 0

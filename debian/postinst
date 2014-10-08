@@ -1,0 +1,71 @@
+#!/bin/sh
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+case "$1" in
+    configure)
+######################
+        echo "Adding mediabrowser user..."
+        if ! getent passwd mediabrowser >/dev/null 2>&1; then
+            useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin mediabrowser
+#            insserv -d mediabrowser
+            echo "...ok"
+        else
+            echo "[Warning] mediabrowser user already exists."
+        fi
+
+        echo "Removing old pid file if present..."
+        if [ -e /var/run/mediabrowser ]; then
+            rm -Rf /var/run/mediabrowser
+            echo "...ok"
+        fi
+
+######################
+
+        SERVICE_XPATH_NAME="mediabrowser"
+        SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
+
+        echo "Initial configuration..."
+        if ! omv_config_exists "${SERVICE_XPATH}"; then
+            omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
+            omv_config_add_element "${SERVICE_XPATH}" "enable" "0"
+            omv_config_add_element "${SERVICE_XPATH}" "showtab" "0"
+            echo "...ok"
+        else
+            echo "[Warning] mediabrowser configuration already exists."
+        fi
+
+#       echo "Calling insserv..."
+#            insserv -d mediabrowser
+#       echo "...ok"
+
+        echo "Launch triggers..."
+        omv_install_fixperms
+
+        # Activate package triggers. These triggers are only set during the
+        # package installation.
+        dpkg-trigger update-fixperms
+        dpkg-trigger update-locale
+        echo "...ok"
+
+        echo "Launching Media Browser install procedure..."
+        omv-mkconf mediabrowser install
+        echo "...ok"
+
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
