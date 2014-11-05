@@ -98,6 +98,8 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
         // Modify result data
         $settingsObject["enable"] = boolval($object["enable"]);
         $settingsObject["showtab"] = boolval($object["showtab"]);
+		$settingsObject["mntentref"] = $object["mntentref"];
+		$settingsObject["db-folder"] = $object["db-folder"];
 
         return $settingsObject;
     }
@@ -120,27 +122,37 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
         $this->validateMethodContext($context, array(
             "role" => OMV_ROLE_ADMINISTRATOR
         ));
-
+		
         // Validate the parameters of the RPC service method.
         $this->validateMethodParams(
             $params,
             '{
                 "type": "object",
                 "properties": {
-		                "enable": {
-		                    "type": "boolean"
-		                },
-		                "showtab": {
-		                    "type": "boolean"
-		                }
+		                "enable": { "type" : "boolean" },
+		                "showtab": { "type" : "boolean" },
+						"mntentref": { ' . $GLOBALS['OMV_JSONSCHEMA_UUID_NONE'] . ' },
+						"db-folder": { "type" : "string", "optional" : true }
                 }
             }'
         );
+		
+		// Gets the stored folder to see if a data movement is required
+        $object = $xmlConfig->get($this->getXpath());
+        if (!is_null($object)) {
+			$old_folder = ($params['db-folder'] == $object["db-folder"]) ? "" : $object["db-folder"];
+        }
+		else {
+			$old_folder = "";
+		}
 
         // Prepare configuration data
         $object = array(
             "enable"    => array_boolval($params, "enable"),
-            "showtab"   => array_boolval($params, "showtab")
+            "showtab"   => array_boolval($params, "showtab"),
+            "mntentref" => $params['mntentref'],
+            "db-folder" => $params['db-folder'],
+			"old_db-folder" => $old_folder
         );
 
         // Set configuration object

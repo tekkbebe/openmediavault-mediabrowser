@@ -25,6 +25,46 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
     rpcGetMethod : "getSettings",
     rpcSetMethod : "setSettings",
 
+    initComponent : function () {
+        var me = this;
+
+        me.on('load', function () {
+            var checked = me.findField('enable').checked;
+            var showtab = me.findField('showtab').checked;
+            var parent = me.up('tabpanel');
+
+            if (!parent)
+                return;
+
+            var webClientPanel = parent.down('panel[title=' + _("Web Client") + ']');
+
+            if (webClientPanel) {
+                checked ? webClientPanel.enable() : webClientPanel.disable();
+                showtab ? webClientPanel.tab.show() : webClientPanel.tab.hide();
+            }
+        });
+        me.callParent(arguments);
+    },
+
+    getButtonItems : function() {
+        var me = this;
+        var items = me.callParent(arguments);
+        items.push({
+            id       : me.getId() + "-webclient",
+            xtype    : "button",
+			text    : _("Media Browser Web Client"),
+            icon     : "images/mediabrowser.png",
+            iconCls  : Ext.baseCSSPrefix + "btn-icon-16x16",
+            disabled : true,
+            scope    : me,
+            handler  : function() {
+				var link = 'http://' + location.hostname + ':8096/mediabrowser/dashboard/dashboard.html';
+				window.open(link, '_blank');
+            }
+        });
+        return items;
+    },
+
     getFormItems : function() {
         return [{
             xtype    : "fieldset",
@@ -38,21 +78,55 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
                 fieldLabel : _("Enable"),
                 checked    : false
             },{
+                xtype         : "combo",
+                name          : "mntentref",
+                fieldLabel    : _("Database Volume"),
+                emptyText     : _("Select a volume ..."),
+                allowBlank    : false,
+                allowNone     : false,
+                editable      : false,
+                triggerAction : "all",
+                displayField  : "description",
+                valueField    : "uuid",
+                store         : Ext.create("OMV.data.Store", {
+                    autoLoad : true,
+                    model    : OMV.data.Model.createImplicit({
+                        idProperty : "uuid",
+                        fields     : [
+                            { name  : "uuid", type : "string" },
+                            { name  : "devicefile", type : "string" },
+                            { name  : "description", type : "string" }
+                        ]
+                    }),
+                    proxy    : {
+                        type    : "rpc",
+                        rpcData : {
+                            service : "ShareMgmt",
+                            method  : "getCandidates"
+                        },
+                        appendSortParams : false
+                    },
+                    sorters  : [{
+                        direction: "ASC",
+                        property: "devicefile"
+                    }]
+                }),
+                plugins : [{
+                    ptype : "fieldinfo",
+                    text  : _("Database files will move to new location if database volume is changed.")
+                }]
+            },{
+                xtype      : "textfield",
+                name       : "db-folder",
+                fieldLabel : _("Database Folder"),
+                allowNone  : true,
+                readOnly   : true
+            },{
                 xtype      : "checkbox",
                 name       : "showtab",
                 fieldLabel : _("Show Client"),
                 boxLabel   : _("Show tab containing Web Client frame."),
                 checked    : false
-            },{
-                xtype   : "button",
-                name    : "openmanage",
-                text    : _("Media Browser Web Client"),
-                scope   : this,
-                margin  : "0 0 5 0",
-                handler : function() {
-                    var link = 'http://' + location.hostname + ':8096/mediabrowser/dashboard/dashboard.html';
-                    window.open(link, '_blank');
-                }
             }]
         }];
     }
