@@ -20,35 +20,43 @@ set -e
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 
-#############################
 RUN_AS="mediabrowser"
 RUN_GRP="users"
 SERVICE="mediabrowser"
-#############################
+SERVICE_XPATH="//services/${SERVICE}"
 
-SERVICE_XPATH=/config/services/mediabrowser
-
-#############################
-SERVICE_XPATH_ENABLE="${SERVICE_XPATH}/enable"
-
-LINK="https://www.dropbox.com/s/07hh1g4x9xo28jb/MBServer.Mono.zip?dl=1"
+LINK="https://github.com/MediaBrowser/MediaBrowser.Releases/raw/master/Server/MediaBrowser.Mono.zip"
 FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
 
-#MB_HOME="$(getent passwd ${SERVICE} | cut -d: -f6)"
-
-# Enable/disable service
-#if [ "$(omv_config_get "/config/services/mediabrowser/enable")" != "1" ]; then
-#    exit 0
-#fi
+if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
+	update-rc.d ${SERVICE} disable
+fi
 
 install()
 {
-    echo "Installing Media Browser..."
-#	echo '. /opt/mono/env.sh' >> ~/.bash_profile
-    mkdir -p ${INSTALL_DIR}
-    chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+	if omv_config_exists "${SERVICE_XPATH}"; then
+		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+	else
+		data_directory="/var/lib/${SERVICE}"
+	fi
 
+	if [ -d "${INSTALL_DIR}" ]; then
+		if [ -d "${INSTALL_DIR}/ProgramData-Server" ]; then
+			echo "Moving data directory..."
+			if [ ! -d "${data_directory}" ]; then
+				mkdir -p "${data_directory}"
+				chown ${RUN_AS}:${RUN_GRP} ${data_directory}
+			fi
+			mv -f ${INSTALL_DIR}/ProgramData-Server ${data_directory}
+			chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+		fi
+		rm -rf "${INSTALL_DIR}"
+	fi
+
+	mkdir -p "${INSTALL_DIR}"
+	chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+	
     if [ -f "${FILE}" ]; then
         rm -f ${FILE}
     fi
@@ -64,33 +72,49 @@ install()
 	echo "Calling insserv..."
     insserv ${SERVICE}
 	echo "...ok"
+}
 
-    if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "1" ]; then
-        update-rc.d ${SERVICE} disable
-    fi
+moveDbFolder()
+{
+	current_data_directory = $(omv_config_get "${SERVICE_XPATH}/old_db-folder")
+	data_directory = $(omv_config_get "${SERVICE_XPATH}/db-folder")
 
-#    chown -R ${RUN_AS}:${RUN_GRP} "${MB_HOME}"
+	if [ ! -d "${data_directory}" ]; then
+		mkdir -p "${data_directory}"
+	fi
+
+	cp -rfp ${current_data_directory}/* ${data_directory}/
+	chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+
+	rm -rf ${current_data_directory}/*
+	xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
 }
 
 case $2 in
     install)
-        if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "1" ]; then
-            install
-        fi
+		echo "Installing Media Browser..."
+		install
     ;;
 
     update)
+		echo "Updating Media Browser..."
+		update-rc.d ${SERVICE} stop
         install
     ;;
 
+	moveDbFolder)
+		if [ "$(omv_config_get "${SERVICE_XPATH}/old_db-folder")" != "" ]; then
+			echo "Moving database..."
+			moveDbFolder
+		fi
+	;;
+	
     *)
     ;;
 esac
 
-if [ "$(omv_config_get "${SERVICE_XPATH_ENABLE}")" != "0" ]; then
-#    config
+if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
     invoke-rc.d ${SERVICE} start
 fi
-#############################
 
 exit 0
