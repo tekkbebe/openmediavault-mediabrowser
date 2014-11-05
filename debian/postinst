@@ -7,11 +7,9 @@ set -e
 
 case "$1" in
     configure)
-######################
         echo "Adding mediabrowser user..."
         if ! getent passwd mediabrowser >/dev/null 2>&1; then
             useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin mediabrowser
-#            insserv -d mediabrowser
             echo "...ok"
         else
             echo "[Warning] mediabrowser user already exists."
@@ -23,24 +21,21 @@ case "$1" in
             echo "...ok"
         fi
 
-######################
-
         SERVICE_XPATH_NAME="mediabrowser"
-        SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
+        SERVICE_XPATH="//services/${SERVICE_XPATH_NAME}"
 
         echo "Initial configuration..."
         if ! omv_config_exists "${SERVICE_XPATH}"; then
             omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
             omv_config_add_element "${SERVICE_XPATH}" "enable" "0"
             omv_config_add_element "${SERVICE_XPATH}" "showtab" "0"
+			omv_config_add_element "${SERVICE_XPATH}" "mntentref" ""
+			omv_config_add_element "${SERVICE_XPATH}" "db-folder" "/var/lib/${SERVICE_XPATH_NAME}"
+            omv_config_add_element "${SERVICE_XPATH}" "old_db-folder" ""
             echo "...ok"
         else
             echo "[Warning] mediabrowser configuration already exists."
         fi
-
-#       echo "Calling insserv..."
-#            insserv -d mediabrowser
-#       echo "...ok"
 
         echo "Launch triggers..."
         omv_install_fixperms
