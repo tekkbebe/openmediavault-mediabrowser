@@ -14,40 +14,20 @@
 
 set -e
 
-############### BEGIN EDIT ME ################
-RUN_AS=mediabrowser
-RUN_GRP=users
-APP_PATH=/opt/mediabrowser
-#DAEMON="/opt/mono/bin/mono -- MediaBrowser.Server.Mono.exe"
-DAEMON="/usr/bin/mono -- MediaBrowser.Server.Mono.exe"
-PID_FILE=/var/run/mediabrowser/mediabrowser.pid
+SERVICE="mediabrowser"
+RUN_AS="mediabrowser"
+RUN_GRP="users"
+APP_PATH="/opt/${SERVICE}"
+PID_FILE="/var/run/${SERVICE}/${SERVICE}.pid"
 PID_PATH=$(dirname $PID_FILE)
-NAME=mediabrowser
-DESC=mediabrowser
-DATA_DIR=/home/mediabrowser/.mediabrowser
-EXTRA_DAEMON_OPTS=""
-DAEMON_OPTS=" ${EXTRA_DAEMON_OPTS}"
-#start-stop-daemon --start --background -m --oknodo --pidfile /var/run/mediabrowser/mediabrowser.pid --exec /opt/mono/bin/mono -- /opt/mediabrowser/MediaBrowser.Server.Mono.exe
-############### END EDIT ME ##################
+DAEMON="/usr/bin/mono -- MediaBrowser.Server.Mono.exe"
 
-# Get lsb functions
 . /lib/lsb/init-functions
 
-# Create PID directory if not exist and ensure the MediaBrowser user can write to it
 if [ ! -d $PID_PATH ]; then
     mkdir -p $PID_PATH
     chown $RUN_AS $PID_PATH
 fi
-
-# Create logs directory if not exist and ensure the MediaBrowser user can write to it
-#if [ ! -d $DATA_DIR/logs ]; then
-#    mkdir -p $DATA_DIR/logs
-#    chown $RUN_AS $DATA_DIR/logs
-#fi
-
-#touch /home/mediabrowser/.mediabrowser/logs/mediabrowser.log
-#chown $RUN_AS /home/mediabrowser/.mediabrowser/logs/mediabrowser.log
-#chmod 775 -R /home/mediabrowser/.mediabrowser/logs
 
 if [ -e $PID_FILE ]; then
     PID=`cat $PID_FILE`
@@ -56,23 +36,6 @@ if [ -e $PID_FILE ]; then
         rm $PID_FILE
     fi
 fi
-
-#if [ ! -f $DATA_DIR/settings.conf ]; then
-#    echo "[core]
-#data_dir = /home/mediabrowser/.mediabrowser
-#permission_folder = 0777
-#group = users
-#port = 5050
-#show_wizard = 1
-#launch_browser = 0
-#permission_file = 0777
-
-#[updater]
-#git_command = git" > $DATA_DIR/settings.conf
-#    chown $RUN_AS $PID_PATH
-#    chown $RUN_AS $DATA_DIR/settings.conf
-#    chmod 775 $DATA_DIR/settings.conf
-#fi
 
 is_running() {
     if [ ! -e $PID_FILE ]; then
@@ -83,18 +46,24 @@ is_running() {
 
 start() {
   if ! is_running; then
-#    chmod 775 /home/mediabrowser/.mediabrowser -R
-    echo "Starting $DESC"
-#	start-stop-daemon --start --user root --chuid root --background -m --oknodo --pidfile /var/run/mediabrowser/mediabrowser.pid --chdir /opt/mediabrowser --exec /opt/mono/bin/mono -- MediaBrowser.Server.Mono.exe
+    echo "Starting $SERVICE"
+	if omv_config_exists "${SERVICE_XPATH}"; then
+		DBFOLDER="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+	else
+		DBFOLDER="/var/lib/${SERVICE}"
+	fi
+	DAEMON_OPTS=" -programdata ${DBFOLDER}"
+	
+#	start-stop-daemon --start --user root --chuid root --background -m --oknodo --pidfile /var/run/mediabrowser/mediabrowser.pid --chdir /opt/mediabrowser --exec /opt/mono/bin/mono -- MediaBrowser.Server.Mono.exe -programdata /var/lib/mediabrowser
 	start-stop-daemon --start --user $RUN_AS --chuid $RUN_AS --background -m --oknodo --pidfile $PID_FILE --chdir $APP_PATH --exec $DAEMON $DAEMON_OPTS
   else
-    echo "$DESC is running"
+    echo "$SERVICE is running"
   fi
 }
 
 stop() {
   if is_running; then
-    echo "Stopping $DESC"
+    echo "Stopping $SERVICE"
 #	start-stop-daemon --stop --pidfile /var/run/mediabrowser/mediabrowser.pid --retry 15
     start-stop-daemon --stop --pidfile $PID_FILE --retry 15
   fi
@@ -104,7 +73,7 @@ restart() {
   if is_running; then
     stop
   fi
-  echo "Restarting $DESC"
+  echo "Restarting $SERVICE"
   start
 }
 
@@ -121,7 +90,7 @@ case "$1" in
     ;;
   status)
 #	status_of_proc -p /var/run/mediabrowser/mediabrowser.pid "/opt/mono/bin/mono -- MediaBrowser.Server.Mono.exe" "mediabrowser"
-    status_of_proc -p $PID_FILE "$DAEMON" "$NAME"
+    status_of_proc -p $PID_FILE "$DAEMON" "$SERVICE"
     ;;
   *)
     echo "Usage: $0 {start|stop|restart|uninstall}"
