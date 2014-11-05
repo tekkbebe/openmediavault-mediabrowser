@@ -1,10 +1,10 @@
-openmediavault-mediabrowser (1.0.1) stable; urgency=low
+openmediavault-mediabrowser (1.0.2) stable; urgency=low
 
   * Delete cache folder when the plugin is uninstalled
 
- -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sun, 05 Nov 2014 13:27:00 +0100
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sun, 05 Nov 2014 17:43:00 +0100
 
- openmediavault-mediabrowser (1.0.1) stable; urgency=low
+openmediavault-mediabrowser (1.0.1) stable; urgency=low
 
   * Updated download repository for mediabrowser package
   * Move database folder outside the executable folder for updates
