@@ -1,3 +1,11 @@
+openmediavault-mediabrowser (1.0.1) stable; urgency=low
+
+  * Updated download repository for mediabrowser package
+  * Move database folder outside the executable folder for updates
+  * Allow the user configure the database folder location
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sun, 05 Nov 2014 13:27:00 +0100
+
 openmediavault-mediabrowser (1.0.0) stable; urgency=low
 
   * Initial release
