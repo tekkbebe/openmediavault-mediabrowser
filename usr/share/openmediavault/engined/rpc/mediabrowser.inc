@@ -136,15 +136,22 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
                 }
             }'
         );
+
+	// Get path of mntentref and set db-folder to this path
+        $xPath = sprintf("//system/fstab/mntent[uuid='%s']", $params['mntentref']);
+        $deviceDir = $xmlConfig->get($xPath);
+        $deviceDir = $deviceDir['dir'];
+
+        $dbFolder = "{$deviceDir}/ProgramData-Server";
+        $params['db-folder'] = $dbFolder;
 		
-		// Gets the stored folder to see if a data movement is required
+	// Gets the stored folder to see if a data movement is required
         $object = $xmlConfig->get($this->getXpath());
         if (!is_null($object)) {
-			$old_folder = ($params['db-folder'] == $object["db-folder"]) ? "" : $object["db-folder"];
-        }
-		else {
-			$old_folder = "";
-		}
+		$old_folder = ($params['db-folder'] == $object["db-folder"]) ? "" : $object["db-folder"];
+        } else {
+		$old_folder = "";
+	}
 
         // Prepare configuration data
         $object = array(
@@ -152,7 +159,7 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
             "showtab"   => array_boolval($params, "showtab"),
             "mntentref" => $params['mntentref'],
             "db-folder" => $params['db-folder'],
-			"old_db-folder" => $old_folder
+	    "old_db-folder" => $old_folder
         );
 
         // Set configuration object
