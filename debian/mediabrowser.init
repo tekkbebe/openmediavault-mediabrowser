@@ -22,7 +22,10 @@ PID_FILE="/var/run/${SERVICE}/${SERVICE}.pid"
 PID_PATH=$(dirname $PID_FILE)
 DAEMON="/usr/bin/mono -- MediaBrowser.Server.Mono.exe"
 
+SERVICE_XPATH="//services/${SERVICE}"
+
 . /lib/lsb/init-functions
+. /usr/share/openmediavault/scripts/helper-functions
 
 if [ ! -d $PID_PATH ]; then
     mkdir -p $PID_PATH
@@ -53,7 +56,7 @@ start() {
 		DBFOLDER="/var/lib/${SERVICE}"
 	fi
 	DAEMON_OPTS=" -programdata ${DBFOLDER}"
-	
+
 #	start-stop-daemon --start --user root --chuid root --background -m --oknodo --pidfile /var/run/mediabrowser/mediabrowser.pid --chdir /opt/mediabrowser --exec /opt/mono/bin/mono -- MediaBrowser.Server.Mono.exe -programdata /var/lib/mediabrowser
 	start-stop-daemon --start --user $RUN_AS --chuid $RUN_AS --background -m --oknodo --pidfile $PID_FILE --chdir $APP_PATH --exec $DAEMON $DAEMON_OPTS
   else

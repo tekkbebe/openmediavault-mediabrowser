@@ -30,7 +30,7 @@ FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
-	update-rc.d ${SERVICE} disable
+	update-rc.d ${SERVICE} disable || :
 fi
 
 install()
@@ -38,7 +38,7 @@ install()
 	if omv_config_exists "${SERVICE_XPATH}"; then
 		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
 	fi
-	if [ data_directory == "" ]; then
+	if [ "${data_directory}" == "" ]; then
 		data_directory="/var/lib/${SERVICE}"
 	fi
 
@@ -57,7 +57,7 @@ install()
 
 	mkdir -p "${INSTALL_DIR}"
 	chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
-	
+
     if [ -f "${FILE}" ]; then
         rm -f ${FILE}
     fi
@@ -109,7 +109,7 @@ case $2 in
 			moveDbFolder
 		fi
 	;;
-	
+
     *)
     ;;
 esac
