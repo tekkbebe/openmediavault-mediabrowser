@@ -25,6 +25,18 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
     rpcGetMethod : "getSettings",
     rpcSetMethod : "setSettings",
 
+    plugins      : [{
+        ptype        : "linkedfields",
+        correlations : [{
+            conditions  : [
+                { name : "enable", value : true }
+            ],
+            properties : function(valid, field) {
+                this.setButtonDisabled("webclient", !valid);
+            }
+        }]
+    }],
+
     initComponent : function () {
         var me = this;
 

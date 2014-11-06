@@ -38,7 +38,7 @@ install()
 	if omv_config_exists "${SERVICE_XPATH}"; then
 		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
 	fi
-	if [ "${data_directory}" == "" ]; then
+	if [ "${data_directory}" = "" ]; then
 		data_directory="/var/lib/${SERVICE}"
 	fi
 
@@ -49,8 +49,9 @@ install()
 				mkdir -p "${data_directory}"
 				chown ${RUN_AS}:${RUN_GRP} ${data_directory}
 			fi
-			mv -f ${INSTALL_DIR}/ProgramData-Server ${data_directory}
+			cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
 			chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+			rm -r ${INSTALL_DIR}/ProgramData-Server
 		fi
 		rm -rf "${INSTALL_DIR}"
 	fi
