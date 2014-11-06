@@ -37,7 +37,8 @@ install()
 {
 	if omv_config_exists "${SERVICE_XPATH}"; then
 		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
-	else
+	fi
+	if [ data_directory == "" ]; then
 		data_directory="/var/lib/${SERVICE}"
 	fi
 
