@@ -94,7 +94,7 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
                 name          : "mntentref",
                 fieldLabel    : _("Database Volume"),
                 emptyText     : _("Select a volume ..."),
-                allowBlank    : false,
+                allowBlank    : true,
                 allowNone     : false,
                 editable      : false,
                 triggerAction : "all",

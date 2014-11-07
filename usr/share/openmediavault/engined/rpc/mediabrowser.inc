@@ -98,8 +98,8 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
         // Modify result data
         $settingsObject["enable"] = boolval($object["enable"]);
         $settingsObject["showtab"] = boolval($object["showtab"]);
-		$settingsObject["mntentref"] = $object["mntentref"];
-		$settingsObject["db-folder"] = $object["db-folder"];
+        $settingsObject["mntentref"] = $object["mntentref"];
+        $settingsObject["db-folder"] = $object["db-folder"];
 
         return $settingsObject;
     }
@@ -122,36 +122,41 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
         $this->validateMethodContext($context, array(
             "role" => OMV_ROLE_ADMINISTRATOR
         ));
-		
+
         // Validate the parameters of the RPC service method.
         $this->validateMethodParams(
             $params,
             '{
                 "type": "object",
                 "properties": {
-		                "enable": { "type" : "boolean" },
-		                "showtab": { "type" : "boolean" },
-						"mntentref": { ' . $GLOBALS['OMV_JSONSCHEMA_UUID_NONE'] . ' },
-						"db-folder": { "type" : "string", "optional" : true }
+                    "enable": { "type" : "boolean" },
+                    "showtab": { "type" : "boolean" },
+                    "mntentref": { ' . $GLOBALS['OMV_JSONSCHEMA_UUID_NONE'] . ', "optional" : true },
+                    "db-folder": { "type" : "string", "optional" : true }
                 }
             }'
         );
 
-	// Get path of mntentref and set db-folder to this path
-        $xPath = sprintf("//system/fstab/mntent[uuid='%s']", $params['mntentref']);
-        $deviceDir = $xmlConfig->get($xPath);
-        $deviceDir = $deviceDir['dir'];
+        // Get path of mntentref and set db-folder to this path
+        if ( empty($params['mntentref'] === false )
+        {
+            $xPath = sprintf("//system/fstab/mntent[uuid='%s']", $params['mntentref']);
+            $deviceDir = $xmlConfig->get($xPath);
+            $deviceDir = $deviceDir['dir'];
 
-        $dbFolder = "{$deviceDir}/ProgramData-Server";
-        $params['db-folder'] = $dbFolder;
-		
-	// Gets the stored folder to see if a data movement is required
+            $dbFolder = "{$deviceDir}/ProgramData-Server";
+            $params['db-folder'] = $dbFolder;
+        } else {
+            $params['db-folder'] = "/var/lib/mediabrowser/ProgramData-Server";
+        }
+
+        // Gets the stored folder to see if a data movement is required
         $object = $xmlConfig->get($this->getXpath());
         if (!is_null($object)) {
-		$old_folder = ($params['db-folder'] == $object["db-folder"]) ? "" : $object["db-folder"];
+            $old_folder = ($params['db-folder'] == $object["db-folder"]) ? "" : $object["db-folder"];
         } else {
-		$old_folder = "";
-	}
+            $old_folder = "";
+        }
 
         // Prepare configuration data
         $object = array(
@@ -159,7 +164,7 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
             "showtab"   => array_boolval($params, "showtab"),
             "mntentref" => $params['mntentref'],
             "db-folder" => $params['db-folder'],
-	    "old_db-folder" => $old_folder
+            "old_db-folder" => $old_folder
         );
 
         // Set configuration object
