@@ -49,7 +49,7 @@ install()
 				mkdir -p "${data_directory}"
 				chown ${RUN_AS}:${RUN_GRP} ${data_directory}
 			fi
-			if [ ! -d "${INSTALL_DIR}/ProgramData-Server" ]; then
+			if [ ! -d "${data_directory}/ProgramData-Server" ]; then
 				cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
 				chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
 				rm -r ${INSTALL_DIR}/ProgramData-Server
