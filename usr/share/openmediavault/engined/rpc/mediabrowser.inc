@@ -138,7 +138,7 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
         );
 
         // Get path of mntentref and set db-folder to this path
-        if ( empty($params['mntentref'] === false )
+        if ( empty($params['mntentref']) == false )
         {
             $xPath = sprintf("//system/fstab/mntent[uuid='%s']", $params['mntentref']);
             $deviceDir = $xmlConfig->get($xPath);
