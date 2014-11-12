@@ -144,10 +144,10 @@ class OMVRpcServiceMediaBrowser extends OMVRpcServiceAbstract
             $deviceDir = $xmlConfig->get($xPath);
             $deviceDir = $deviceDir['dir'];
 
-            $dbFolder = "{$deviceDir}/ProgramData-Server";
+            $dbFolder = "{$deviceDir}";
             $params['db-folder'] = $dbFolder;
         } else {
-            $params['db-folder'] = "/var/lib/mediabrowser/ProgramData-Server";
+            $params['db-folder'] = "/var/lib/mediabrowser";
         }
 
         // Gets the stored folder to see if a data movement is required
