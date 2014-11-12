@@ -37,88 +37,90 @@ install()
 {
 	if omv_config_exists "${SERVICE_XPATH}"; then
 		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+		xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
 	fi
 	if [ "${data_directory}" = "" ]; then
 		data_directory="/var/lib/${SERVICE}"
 	fi
 
-	if [ -d "${INSTALL_DIR}" ]; then
-		if [ -d "${INSTALL_DIR}/ProgramData-Server" ]; then
-			echo "Moving data directory..."
-			if [ ! -d "${data_directory}" ]; then
-				mkdir -p "${data_directory}"
-				chown ${RUN_AS}:${RUN_GRP} ${data_directory}
-			fi
-			if [ ! -d "${data_directory}/ProgramData-Server" ]; then
-				cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
-				chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
-				rm -r ${INSTALL_DIR}/ProgramData-Server
-			fi
-		fi
-		rm -rf "${INSTALL_DIR}"
+	if [ ! -d "${data_directory}" ]; then
+		mkdir -p "${data_directory}"
+		chown ${RUN_AS}:${RUN_GRP} ${data_directory}
 	fi
 
+	if [ -d "${INSTALL_DIR}/ProgramData-Server" ]; then
+		echo "Moving data directory from <${INSTALL_DIR}/ProgramData-Server> to <${data_directory}>..."
+		if [ ! -d "${data_directory}/ProgramData-Server" ]; then
+			cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
+			chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+		fi
+	fi
+
+	if [ -d "${INSTALL_DIR}" ]; then
+		rm -rf "${INSTALL_DIR}"
+	fi
+	
 	mkdir -p "${INSTALL_DIR}"
 	chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
-    if [ -f "${FILE}" ]; then
-        rm -f ${FILE}
-    fi
+	if [ -f "${FILE}" ]; then
+		rm -f ${FILE}
+	fi
 	echo "Downloading..."
-    wget ${LINK} -O ${FILE}
+	wget ${LINK} -O ${FILE}
 
-    echo "Extracting..."
-    unzip ${FILE} -d ${INSTALL_DIR}
-    rm -f ${FILE}
+	echo "Extracting..."
+	unzip ${FILE} -d ${INSTALL_DIR}
+	rm -f ${FILE}
 
-    chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+	chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
 	echo "Calling insserv..."
-    insserv ${SERVICE}
+	insserv ${SERVICE}
 	echo "...ok"
 }
 
-moveDbFolder()
-{
-	current_data_directory = $(omv_config_get "${SERVICE_XPATH}/old_db-folder")
-	data_directory = $(omv_config_get "${SERVICE_XPATH}/db-folder")
-
-	if [ ! -d "${data_directory}" ]; then
-		mkdir -p "${data_directory}"
-	fi
-
-	cp -rfp ${current_data_directory}/* ${data_directory}/
-	chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
-
-	rm -rf ${current_data_directory}/*
-	xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
-}
-
 case $2 in
-    install)
+	install)
 		echo "Installing Media Browser..."
 		install
-    ;;
+	;;
 
-    update)
+	update)
 		echo "Updating Media Browser..."
 		update-rc.d ${SERVICE} stop
-        install
-    ;;
+		install
+	;;
 
 	moveDbFolder)
-		if [ "$(omv_config_get "${SERVICE_XPATH}/old_db-folder")" != "" ]; then
-			echo "Moving database..."
-			moveDbFolder
+		if omv_config_exists "${SERVICE_XPATH}/old_db-folder"; then
+			current_data_directory="$(omv_config_get "${SERVICE_XPATH}/old_db-folder")"
+
+			if [ "${current_data_directory}" != "" ]; then
+				if [ -d "${current_data_directory}" ]; then
+					data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+					echo "Moving database from <${current_data_directory}> to <${data_directory}>..."
+
+					if [ ! -d "${data_directory}" ]; then
+						mkdir -p "${data_directory}"
+					fi
+
+					cp -rfp ${current_data_directory}/* ${data_directory}/
+					chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+
+					rm -rf ${current_data_directory}/*
+				fi
+				xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
+			fi
 		fi
 	;;
 
-    *)
-    ;;
+	*)
+	;;
 esac
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
-    invoke-rc.d ${SERVICE} start
+	invoke-rc.d ${SERVICE} start
 fi
 
 exit 0
