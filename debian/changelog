@@ -1,6 +1,7 @@
 openmediavault-mediabrowser (1.0.2) stable; urgency=low
 
   * Delete cache folder when the plugin is uninstalled
+  * MediaBrowser Server version 3.0.5424.1
 
  -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sun, 05 Nov 2014 17:43:00 +0100
 
