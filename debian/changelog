@@ -1,3 +1,9 @@
+openmediavault-mediabrowser (1.0.3) UNRELEASED; urgency=low
+
+  * Fix cache folder location bug
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sat, 15 Nov 2014 08:28:28 -0600
+
 openmediavault-mediabrowser (1.0.2) stable; urgency=low
 
   * Delete cache folder when the plugin is uninstalled
