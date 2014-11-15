@@ -7,11 +7,8 @@ set -e
 
 case "$1" in
     purge)
-        SERVICE="mediabrowser"
         SERVICE_XPATH_NAME="mediabrowser"
         SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
-
-        update-rc.d ${SERVICE} stop
 
         rm -rf /opt/${SERVICE_XPATH_NAME}
         rm -f /etc/${SERVICE_XPATH_NAME}.conf
