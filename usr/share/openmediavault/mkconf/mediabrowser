@@ -30,82 +30,82 @@ FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
-	update-rc.d ${SERVICE} disable || :
+    update-rc.d ${SERVICE} disable || :
 fi
 
 install()
 {
-	if omv_config_exists "${SERVICE_XPATH}"; then
-		data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
-		xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
-	fi
-	if [ "${data_directory}" = "" ]; then
-		data_directory="/var/lib/${SERVICE}"
-	fi
+    if omv_config_exists "${SERVICE_XPATH}"; then
+        data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+        xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
+    fi
+    if [ "${data_directory}" = "" ]; then
+        data_directory="/var/lib/${SERVICE}"
+    fi
 
-	if [ ! -d "${data_directory}" ]; then
-		mkdir -p "${data_directory}"
-		chown ${RUN_AS}:${RUN_GRP} ${data_directory}
-	fi
+    if [ ! -d "${data_directory}" ]; then
+        mkdir -p "${data_directory}"
+        chown ${RUN_AS}:${RUN_GRP} ${data_directory}
+    fi
 
-	if [ -d "${INSTALL_DIR}/ProgramData-Server" ]; then
-		echo "Moving data directory from <${INSTALL_DIR}/ProgramData-Server> to <${data_directory}>..."
-		if [ ! -d "${data_directory}/ProgramData-Server" ]; then
-			cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
-			chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
-		fi
-	fi
+    if [ -d "${INSTALL_DIR}/ProgramData-Server" ]; then
+        echo "Moving data directory from <${INSTALL_DIR}/ProgramData-Server> to <${data_directory}>..."
+        if [ ! -d "${data_directory}/ProgramData-Server" ]; then
+            cp -rf ${INSTALL_DIR}/ProgramData-Server ${data_directory}
+            chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+        fi
+    fi
 
-	if [ -d "${INSTALL_DIR}" ]; then
-		rm -rf "${INSTALL_DIR}"
-	fi
+    if [ -d "${INSTALL_DIR}" ]; then
+        rm -rf "${INSTALL_DIR}"
+    fi
 
-	mkdir -p "${INSTALL_DIR}"
-	chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+    mkdir -p "${INSTALL_DIR}"
+    chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
-	if [ -f "${FILE}" ]; then
-		rm -f ${FILE}
-	fi
-	echo "Downloading..."
-	wget ${LINK} -O ${FILE}
+    if [ -f "${FILE}" ]; then
+        rm -f ${FILE}
+    fi
+    echo "Downloading..."
+    wget ${LINK} -O ${FILE}
 
-	echo "Extracting..."
-	unzip ${FILE} -d ${INSTALL_DIR}
-	rm -f ${FILE}
+    echo "Extracting..."
+    unzip ${FILE} -d ${INSTALL_DIR}
+    rm -f ${FILE}
 
-	chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+    chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
-	echo "Calling insserv..."
-	insserv ${SERVICE}
-	echo "...ok"
+    echo "Calling insserv..."
+    insserv ${SERVICE}
+    echo "...ok"
 }
 
 case $2 in
-	install)
-		echo "Installing Media Browser..."
-		install
-	;;
+    install)
+        echo "Installing Media Browser..."
+        install
+    ;;
 
-	update)
-		echo "Updating Media Browser..."
-		update-rc.d ${SERVICE} stop
-		install
-	;;
+    update)
+        echo "Updating Media Browser..."
+        update-rc.d ${SERVICE} stop
+        install
+    ;;
 
-	moveDbFolder)
-		if omv_config_exists "${SERVICE_XPATH}/old_db-folder"; then
-			current_data_directory="$(omv_config_get "${SERVICE_XPATH}/old_db-folder")"
+    moveDbFolder)
+        if omv_config_exists "${SERVICE_XPATH}/old_db-folder"; then
+            current_data_directory="$(omv_config_get "${SERVICE_XPATH}/old_db-folder")"
 
-			if [ "${current_data_directory}" != "" ]; then
-				if [ -d "${current_data_directory}" ]; then
-					data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
-					echo "Moving database from <${current_data_directory}> to <${data_directory}>..."
+            if [ "${current_data_directory}" != "" ]; then
+                if [ -d "${current_data_directory}" ]; then
+                    data_directory="$(omv_config_get "${SERVICE_XPATH}/db-folder")"
+                    echo "Moving database from <${current_data_directory}> to <${data_directory}>..."
 
-					if [ ! -d "${data_directory}" ]; then
-						mkdir -p "${data_directory}"
-					fi
+                    if [ ! -d "${data_directory}" ]; then
+                        mkdir -p "${data_directory}"
+                    fi
 
-					cp -rfp ${current_data_directory}/cache ${data_directory}/
+                    cp -rfp ${current_data_directory}/cache ${data_directory}/
                     cp -rfp ${current_data_directory}/config ${data_directory}/
                     cp -rfp ${current_data_directory}/data ${data_directory}/
                     cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
@@ -114,21 +114,33 @@ case $2 in
                     cp -rfp ${current_data_directory}/logs ${data_directory}/
                     cp -rfp ${current_data_directory}/root ${data_directory}/
 
-					chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
+                    chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
 
-					rm -rf ${current_data_directory}/*
-				fi
-				xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
-			fi
-		fi
-	;;
+                    rm -rf ${current_data_directory}/cache
+                    rm -rf ${current_data_directory}/config
+                    rm -rf ${current_data_directory}/data
+                    rm -rf ${current_data_directory}/ffmpeg
+                    rm -rf ${current_data_directory}/ImagesByName
+                    rm -rf ${current_data_directory}/localization
+                    rm -rf ${current_data_directory}/logs
+                    rm -rf ${current_data_directory}/root
 
-	*)
-	;;
+                    # check for mediabrowser directory in path before deleting
+                    case "${current_data_directory}" in
+                        *mediabrowser*) rm -rf "${current_data_directory}" ;;
+                    esac
+                fi
+                xmlstarlet ed -L -u "${SERVICE_XPATH}/old_db-folder" -v "" -n ${OMV_CONFIG_FILE}
+            fi
+        fi
+    ;;
+
+    *)
+    ;;
 esac
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
-	invoke-rc.d ${SERVICE} start
+    invoke-rc.d ${SERVICE} start
 fi
 
 exit 0
