@@ -21,7 +21,7 @@ set -e
 . /usr/share/openmediavault/scripts/helper-functions
 
 RUN_AS="mediabrowser"
-RUN_GRP="users"
+RUN_GRP="nogroup"
 SERVICE="mediabrowser"
 SERVICE_XPATH="//services/${SERVICE}"
 
@@ -59,7 +59,7 @@ install()
 	if [ -d "${INSTALL_DIR}" ]; then
 		rm -rf "${INSTALL_DIR}"
 	fi
-	
+
 	mkdir -p "${INSTALL_DIR}"
 	chown ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
@@ -105,7 +105,15 @@ case $2 in
 						mkdir -p "${data_directory}"
 					fi
 
-					cp -rfp ${current_data_directory}/* ${data_directory}/
+					cp -rfp ${current_data_directory}/cache ${data_directory}/
+                    cp -rfp ${current_data_directory}/config ${data_directory}/
+                    cp -rfp ${current_data_directory}/data ${data_directory}/
+                    cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
+                    cp -rfp ${current_data_directory}/ImagesByName ${data_directory}/
+                    cp -rfp ${current_data_directory}/localization ${data_directory}/
+                    cp -rfp ${current_data_directory}/logs ${data_directory}/
+                    cp -rfp ${current_data_directory}/root ${data_directory}/
+
 					chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
 
 					rm -rf ${current_data_directory}/*
