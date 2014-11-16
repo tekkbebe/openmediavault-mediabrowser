@@ -5,6 +5,9 @@ set -e
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 
+SERVICE_XPATH_NAME="mediabrowser"
+SERVICE_XPATH="//services/${SERVICE_XPATH_NAME}"
+
 case "$1" in
     configure)
         echo "Adding mediabrowser user..."
@@ -20,9 +23,6 @@ case "$1" in
             rm -Rf /var/run/mediabrowser
             echo "...ok"
         fi
-
-        SERVICE_XPATH_NAME="mediabrowser"
-        SERVICE_XPATH="//services/${SERVICE_XPATH_NAME}"
 
         echo "Initial configuration..."
         if ! omv_config_exists "${SERVICE_XPATH}"; then
@@ -62,6 +62,11 @@ case "$1" in
 esac
 
 #DEBHELPER#
+
+if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
+    sleep 5
+    invoke-rc.d ${SERVICE_XPATH_NAME} stop
+fi
 
 exit 0
 
