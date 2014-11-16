@@ -49,7 +49,7 @@ case "$1" in
         echo "Launching Media Browser install procedure..."
         omv-mkconf mediabrowser install
         echo "...ok"
-sleep 20
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
