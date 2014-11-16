@@ -16,7 +16,7 @@ set -e
 
 SERVICE="mediabrowser"
 RUN_AS="mediabrowser"
-RUN_GRP="users"
+RUN_GRP="nogroup"
 APP_PATH="/opt/${SERVICE}"
 PID_FILE="/var/run/${SERVICE}/${SERVICE}.pid"
 PID_PATH=$(dirname $PID_FILE)
@@ -35,7 +35,7 @@ fi
 if [ -e $PID_FILE ]; then
     PID=`cat $PID_FILE`
     if ! kill -0 $PID > /dev/null 2>&1; then
-        echo "Removing stale $PID_FILE"
+        echo "Removing stale pid file"
         rm $PID_FILE
     fi
 fi

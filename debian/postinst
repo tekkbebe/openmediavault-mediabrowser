@@ -29,8 +29,8 @@ case "$1" in
             omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
             omv_config_add_element "${SERVICE_XPATH}" "enable" "0"
             omv_config_add_element "${SERVICE_XPATH}" "showtab" "0"
-			omv_config_add_element "${SERVICE_XPATH}" "mntentref" ""
-			omv_config_add_element "${SERVICE_XPATH}" "db-folder" "/var/lib/${SERVICE_XPATH_NAME}"
+            omv_config_add_element "${SERVICE_XPATH}" "mntentref" ""
+            omv_config_add_element "${SERVICE_XPATH}" "db-folder" "/var/lib/${SERVICE_XPATH_NAME}"
             omv_config_add_element "${SERVICE_XPATH}" "old_db-folder" ""
             echo "...ok"
         else
@@ -49,7 +49,7 @@ case "$1" in
         echo "Launching Media Browser install procedure..."
         omv-mkconf mediabrowser install
         echo "...ok"
-
+sleep 20
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
@@ -64,3 +64,5 @@ esac
 #DEBHELPER#
 
 exit 0
+
+

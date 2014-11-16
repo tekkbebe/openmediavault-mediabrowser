@@ -9,14 +9,20 @@ case "$1" in
     purge)
         SERVICE_XPATH_NAME="mediabrowser"
         SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
+        FFMPEG_LINK="/usr/local/bin/ffmpeg"
 
         if [ -f "/var/run/${SERVICE_XPATH_NAME}/${SERVICE_XPATH_NAME}.pid" ]; then
-            PID=$(cat /var/run/${SERVICE_XPATH_NAME}/${SERVICE_XPATH_NAME}.pid);
-            kill -0 $PID 2>/dev/null;
-
-            if [ $? -eq 0 ]; then
+            PID=`cat /var/run/${SERVICE_XPATH_NAME}/${SERVICE_XPATH_NAME}.pid`;
+            if ! kill -0 $PID > /dev/null 2>&1; then
+                echo "Removing stale pid file"
+                rm /var/run/${SERVICE_XPATH_NAME}/${SERVICE_XPATH_NAME}.pid
+            else
                 kill -9 $PID;
             fi
+        fi
+
+        if [ -e "${FFMPEG_LINK}" ]; then
+            rm -Rf ${FFMPEG_LINK}
         fi
 
         rm -rf /opt/${SERVICE_XPATH_NAME}

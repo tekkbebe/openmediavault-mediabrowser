@@ -25,6 +25,7 @@ RUN_GRP="nogroup"
 SERVICE="mediabrowser"
 SERVICE_XPATH="//services/${SERVICE}"
 
+FFMPEG_LINK="/usr/local/bin/ffmpeg"
 LINK="https://github.com/MediaBrowser/MediaBrowser.Releases/raw/master/Server/MediaBrowser.Mono.zip"
 FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
@@ -117,7 +118,14 @@ case $2 in
                         cp -rfp ${current_data_directory}/data ${data_directory}/
                     fi
 
-                    if [ -d "${current_data_directory}/ffmpeg" ]; then
+                    if [ ! -e "${FFMPEG_LINK}" ]; then
+                        mv ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
+                        ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
+                        chmod +x ${FFMPEG_LINK}/*/ffmpeg
+                        chmod +x ${FFMPEG_LINK}/*/ffprobe
+                    fi
+
+                    if [ -e "${current_data_directory}/ffmpeg" ]; then
                         cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
                     fi
 
@@ -167,3 +175,5 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
 fi
 
 exit 0
+
+
