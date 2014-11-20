@@ -1,3 +1,9 @@
+openmediavault-mediabrowser (1.0.4) stable; urgency=low
+
+  * Minor tweaks
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Thu, 20 Nov 2014 13:23:11 -0600
+
 openmediavault-mediabrowser (1.0.3) stable; urgency=low
 
   * Fix cache folder location bug
