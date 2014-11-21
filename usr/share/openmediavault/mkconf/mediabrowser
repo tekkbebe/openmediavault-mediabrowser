@@ -118,7 +118,7 @@ case $2 in
                         cp -rfp ${current_data_directory}/data ${data_directory}/
                     fi
 
-                    if [ ! -e "${FFMPEG_LINK}" ]; then
+                    if [ ! -d "${FFMPEG_LINK}" ]; then
                         cp -rfp ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
                         ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffmpeg
