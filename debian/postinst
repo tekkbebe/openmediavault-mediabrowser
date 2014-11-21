@@ -71,7 +71,7 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
                break
             fi
             echo "Still waiting for folders to be created";
-            sleep 1; 
+            sleep 2; 
     done
     sleep 5
     invoke-rc.d ${SERVICE_XPATH_NAME} stop
