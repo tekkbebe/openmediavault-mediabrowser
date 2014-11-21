@@ -64,6 +64,15 @@ esac
 #DEBHELPER#
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
+    while [ ! -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140716/fonts/ARIALUNI.TTF" ]
+        echo "Waiting for folders to be created.";
+        do
+            if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140716/fonts/ARIALUNI.TTF" ]; then
+               break
+            fi
+            echo "Still waiting for folders to be created";
+            sleep 1; 
+    done
     sleep 5
     invoke-rc.d ${SERVICE_XPATH_NAME} stop
 fi
