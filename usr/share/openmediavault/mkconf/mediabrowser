@@ -125,10 +125,6 @@ case $2 in
                         chmod +x ${FFMPEG_LINK}/*/ffprobe
                     fi
 
-                    if [ -e "${current_data_directory}/ffmpeg" ]; then
-                        cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
-                    fi
-
                     if [ -d "${current_data_directory}/ImagesByName" ]; then
                         cp -rfp ${current_data_directory}/ImagesByName ${data_directory}/
                     fi
@@ -147,7 +143,6 @@ case $2 in
 
                     chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
 
-                    rm -rf ${current_data_directory}/ffmpeg
                     rm -rf ${current_data_directory}/cache
                     rm -rf ${current_data_directory}/config
                     rm -rf ${current_data_directory}/data
