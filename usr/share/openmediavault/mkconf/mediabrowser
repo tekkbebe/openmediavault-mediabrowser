@@ -119,7 +119,7 @@ case $2 in
                     fi
 
                     if [ ! -e "${FFMPEG_LINK}" ]; then
-                        mv ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
+                        cp -rfp ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
                         ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffprobe
@@ -147,6 +147,7 @@ case $2 in
 
                     chown -R ${RUN_AS}:${RUN_GRP} ${data_directory}
 
+                    rm -rf ${current_data_directory}/ffmpeg
                     rm -rf ${current_data_directory}/cache
                     rm -rf ${current_data_directory}/config
                     rm -rf ${current_data_directory}/data
