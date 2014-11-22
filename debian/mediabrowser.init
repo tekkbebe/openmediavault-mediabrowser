@@ -62,8 +62,9 @@ start() {
 stop() {
   if is_running; then
     echo "Stopping $SERVICE"
-#	start-stop-daemon --stop --pidfile $PID_FILE --retry 15
-        start-stop-daemon --stop --pidfile /var/run/mediabrowser/mediabrowser.pid --retry 15
+#        start-stop-daemon --stop --pidfile /var/run/mediabrowser/mediabrowser.pid --retry 15 
+	start-stop-daemon --stop --pidfile $PID_FILE --retry 15
+
     rm -rf $PIDDIR
   fi
 }
