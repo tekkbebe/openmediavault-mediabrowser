@@ -1,8 +1,8 @@
-openmediavault-mediabrowser (1.0.4) stable; urgency=low
+openmediavault-mediabrowser (1.0.5) stable; urgency=low
 
-  * Minor tweaks
+  * Adjust while loop
 
- -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Thu, 20 Nov 2014 13:23:11 -0600
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Thu, 21 Nov 2014 13:23:11 -0600
 
 openmediavault-mediabrowser (1.0.3) stable; urgency=low
 
