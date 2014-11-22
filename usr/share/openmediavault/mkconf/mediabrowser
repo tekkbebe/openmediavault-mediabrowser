@@ -24,7 +24,6 @@ RUN_AS="mediabrowser"
 RUN_GRP="nogroup"
 SERVICE="mediabrowser"
 SERVICE_XPATH="//services/${SERVICE}"
-
 FFMPEG_LINK="/usr/local/bin/ffmpeg"
 LINK="https://github.com/MediaBrowser/MediaBrowser.Releases/raw/master/Server/MediaBrowser.Mono.zip"
 FILE="/tmp/MBServer.Mono.zip"
@@ -118,8 +117,8 @@ case $2 in
                         cp -rfp ${current_data_directory}/data ${data_directory}/
                     fi
 
-                    if [ ! -d "${FFMPEG_LINK}" ]; then
-                        cp -rfp ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
+                    if [ ! -e "${FFMPEG_LINK}" ]; then
+                        mv ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
                         ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffprobe
