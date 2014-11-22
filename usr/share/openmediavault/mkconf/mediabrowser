@@ -123,6 +123,10 @@ case $2 in
                         chmod +x ${FFMPEG_LINK}/*/ffmpeg
                         chmod +x ${FFMPEG_LINK}/*/ffprobe
                     fi
+                    
+                    if [ -e "${current_data_directory}/ffmpeg" ]; then
+-                       cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
+-                   fi
 
                     if [ -d "${current_data_directory}/ImagesByName" ]; then
                         cp -rfp ${current_data_directory}/ImagesByName ${data_directory}/
