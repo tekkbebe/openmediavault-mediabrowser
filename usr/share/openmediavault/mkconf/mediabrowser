@@ -125,8 +125,8 @@ case $2 in
                     fi
                     
                     if [ -e "${current_data_directory}/ffmpeg" ]; then
--                       cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
--                   fi
+                        cp -rfp ${current_data_directory}/ffmpeg ${data_directory}/
+                    fi
 
                     if [ -d "${current_data_directory}/ImagesByName" ]; then
                         cp -rfp ${current_data_directory}/ImagesByName ${data_directory}/
