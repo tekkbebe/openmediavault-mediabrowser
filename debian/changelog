@@ -1,6 +1,6 @@
 openmediavault-mediabrowser (1.0.10) stable; urgency=low
 
-  * adjust depends
+  * adjust loop
 
  -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Fri, 05 Dev 2014 13:23:11 -0600
 
