@@ -72,8 +72,8 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
                break
             elif [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140923/fonts/fonts.conf" ]; then
                break
-            else [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/xxxxxxxx/fonts/fonts.conf" ];
-               break
+            else
+               continue
             fi
             echo "Still waiting for folders to be created";
             echo "$i";
