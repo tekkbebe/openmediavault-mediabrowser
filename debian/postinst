@@ -64,12 +64,21 @@ esac
 #DEBHELPER#
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
-    while [ ! -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140716/fonts/ARIALUNI.TTF" ]
+    if [ $(dpkg --print-architecture | grep '64') ]; then
+        FOLDER_A="20140716";
+    elif  [ $(dpkg --print-architecture | grep '32') ]; then
+        FOLDER_A="20140923";
+    else
+        FOLDER_A="xxxxxxx";
+    fi
+    COUNTER=0
+    while [ $COUNTER -lt 25 ]
         echo "Waiting for folders to be created.";
         do
-            if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140716/fonts/ARIALUNI.TTF" ]; then
+            if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/${FOLDER_A}/fonts/ARIALUNI.TTF" ]; then
                break
             fi
+            let COUNTER=COUNTER+1;
             echo "Still waiting for folders to be created";
             sleep 2; 
     done
