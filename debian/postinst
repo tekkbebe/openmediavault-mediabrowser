@@ -61,25 +61,24 @@ case "$1" in
     ;;
 esac
 
-if [ -f /boot/initrd.img-3.2.0-4-amd64 ]; then
-    FOLDER_A="20140716";
-elif  [ -f /boot/initrd.img-3.2.0-4-686-pae ]; then
-    FOLDER_A="20140923";
-else
-    FOLDER_A="xxxxxxx";
-fi
-
 #DEBHELPER#
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
-    while [ ! -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/${FOLDER_A}/fonts/ARIALUNI.TTF" ]
+    i=0
+    while [ "$i" -le "60" ]
         echo "Waiting for folders to be created.";
         do
-            if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/${FOLDER_A}/fonts/ARIALUNI.TTF" ]; then
+            if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140716/fonts/ARIALUNI.TTF" ]; then
+               break
+            elif [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/20140923/fonts/ARIALUNI.TTF" ]; then
+               break
+            else [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/xxxxxxxx/fonts/ARIALUNI.TTF" ]; then
                break
             fi
             echo "Still waiting for folders to be created";
-            sleep 2; 
+            echo "$i";
+            sleep 2;
+            i=$(($i+1))
     done
     sleep 5
     invoke-rc.d ${SERVICE_XPATH_NAME} stop
