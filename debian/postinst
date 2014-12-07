@@ -78,7 +78,7 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
             if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/${FOLDER_A}/fonts/ARIALUNI.TTF" ]; then
                break
             fi
-            let COUNTER=COUNTER+1;
+            COUNTER=COUNTER+1;
             echo "Still waiting for folders to be created";
             sleep 2; 
     done
