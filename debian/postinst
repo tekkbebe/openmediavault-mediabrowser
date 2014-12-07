@@ -66,7 +66,7 @@ esac
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
     if [ $(dpkg --print-architecture | grep '64') ]; then
         FOLDER_A="20140716";
-    elif  [ $(dpkg --print-architecture | grep '32') ]; then
+    elif  [ $(dpkg --print-architecture | grep '86') ]; then
         FOLDER_A="20140923";
     else
         FOLDER_A="xxxxxxx";
