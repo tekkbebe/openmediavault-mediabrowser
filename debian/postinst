@@ -72,7 +72,7 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
         FOLDER_A="xxxxxxx";
     fi
     COUNTER=0
-    while [ $COUNTER -lt 25 ]
+    while [ $COUNTER -lt 60 ]
         echo "Waiting for folders to be created.";
         do
             if [ -e "/var/lib/${SERVICE_XPATH_NAME}/ffmpeg/${FOLDER_A}/fonts/ARIALUNI.TTF" ]; then
