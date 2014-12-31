@@ -98,5 +98,5 @@ case "$1" in
 	status_of_proc -p $PID_FILE "$DAEMON" "$SERVICE"
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|stop|restart|status}"
 esac
