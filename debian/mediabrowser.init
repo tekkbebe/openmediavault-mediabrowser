@@ -78,9 +78,11 @@ stop() {
 restart() {
   if is_running; then
     stop
+    sleep 1
+    start
+  else
+    echo "$SERVICE is not running"
   fi
-  echo "Restarting $SERVICE"
-  start
 }
 
 case "$1" in
