@@ -162,8 +162,28 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
                 fieldLabel : _("Show Client"),
                 boxLabel   : _("Show tab containing Web Client frame."),
                 checked    : false
+            },{
+                xtype      : "button",
+                name       : "update",
+                id         : this.getId() + "-update",
+                text       : _("Force update"),
+                scope      : this,
+                margin     : "0 0 5 0",
+                handler    : Ext.Function.bind(this.onUpdate, this, [ this ])
             }]
         }];
+    },
+
+    onUpdate : function() {
+        Ext.create("OMV.window.Execute", {
+            title          : _("Click start to force update..."),
+            rpcService     : "MediaBrowser",
+            rpcMethod      : "doUpdate",
+            hideStopButton : true,
+            listeners      : {
+                exception  : function(wnd, error) { OMV.MessageBox.error(null, error);}
+            }
+        }).show();
     }
 });
 
