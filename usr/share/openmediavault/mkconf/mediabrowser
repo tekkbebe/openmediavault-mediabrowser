@@ -78,14 +78,14 @@ install()
     echo "Creating libwebp config..."
     cat <<EOF > "${LIBWEBP_CONF}"
 <configuration>
-  <dllmap dll="libwebp" target="libwebp.so.2" os="linux"/>
+  <dllmap dll="libwebp" target="./libwebp/osx/libwebp.5.dylib" os="osx"/>
 </configuration>  
 EOF
 
     echo "Creating mediainfo config..."
     cat <<EOF > "${MEDIAINFO_CONF}"
 <configuration>
-  <dllmap dll="MediaInfo" target="libmediainfo.so" os="linux"/>
+  <dllmap dll="MediaInfo" target="./MediaInfo/osx/libmediainfo.dylib" os="osx"/>
 </configuration>
 EOF
 
