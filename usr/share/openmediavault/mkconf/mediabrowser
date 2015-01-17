@@ -28,6 +28,8 @@ FFMPEG_LINK="/usr/local/bin/ffmpeg"
 LINK="https://github.com/MediaBrowser/MediaBrowser.Releases/raw/master/Server/MediaBrowser.Mono.zip"
 FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
+LIBWEBP_CONF="/opt/${SERVICE}/Imazen.WebP.dll.config"
+MEDIAINFO_CONF="/opt/${SERVICE}/MediaBrowser.MediaInfo.dll.config"
 
 if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "1" ]; then
     update-rc.d ${SERVICE} disable || :
@@ -72,6 +74,20 @@ install()
     echo "Extracting..."
     unzip ${FILE} -d ${INSTALL_DIR}
     rm -f ${FILE}
+
+    echo "Creating libwebp config..."
+    cat <<EOF > "${LIBWEBP_CONF}"
+<configuration>
+  <dllmap dll="libwebp" target="libwebp.so.2" os="linux"/>
+</configuration>  
+EOF
+
+    echo "Creating mediainfo config..."
+    cat <<EOF > "${MEDIAINFO_CONF}"
+<configuration>
+  <dllmap dll="MediaInfo" target="libmediainfo.so" os="linux"/>
+</configuration>
+EOF
 
     chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
 
@@ -174,5 +190,4 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
 fi
 
 exit 0
-
 
