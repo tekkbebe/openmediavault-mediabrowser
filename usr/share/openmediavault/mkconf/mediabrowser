@@ -28,6 +28,9 @@ FFMPEG_LINK="/usr/local/bin/ffmpeg"
 LINK="https://github.com/MediaBrowser/MediaBrowser.Releases/raw/master/Server/MediaBrowser.Mono.zip"
 FILE="/tmp/MBServer.Mono.zip"
 INSTALL_DIR="/opt/${SERVICE}"
+LIBWEBP_LINK="https://github.com/tekkbebe/OMV.Resources/raw/master/libs/libwebp.zip"
+LIBWEBP_FILE="/tmp/libwebp.zip"
+LIBWEBP_DIR="/opt/${SERVICE}/libwebp"
 LIBWEBP_CONF="/opt/${SERVICE}/Imazen.WebP.dll.config"
 MEDIAINFO_CONF="/opt/${SERVICE}/MediaBrowser.MediaInfo.dll.config"
 SQLITE3_CONF="/opt/${SERVICE}/System.Data.SQLite.dll.config"
@@ -76,10 +79,20 @@ install()
     unzip ${FILE} -d ${INSTALL_DIR}
     rm -f ${FILE}
 
+    if [ -f "${LIBWEBP_FILE}" ]; then
+        rm -f ${LIBWEBP_FILE}
+    fi
+    echo "Downloading..."
+    wget ${LIBWEBP_LINK} -O ${LIBWEBP_FILE}
+
+    echo "Extracting..."
+    unzip ${LIBWEBP_FILE} -d ${LIBWEBP_DIR}
+    rm -f ${LIBWEBP_FILE}
+
     echo "Creating libwebp config..."
     cat <<EOF > "${LIBWEBP_CONF}"
 <configuration>
-  <dllmap dll="libwebp" target="./libwebp/osx/libwebp.5.dylib" os="osx"/>
+  <dllmap dll="libwebp" target="./libwebp/linux/libwebp.so.5.0.2" os="linux"/>
 </configuration>  
 EOF
 
@@ -198,4 +211,3 @@ if [ "$(omv_config_get "${SERVICE_XPATH}/enable")" != "0" ]; then
 fi
 
 exit 0
-
