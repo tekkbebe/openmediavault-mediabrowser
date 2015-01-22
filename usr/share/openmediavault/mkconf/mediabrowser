@@ -160,8 +160,8 @@ case $2 in
                     if [ ! -e "${FFMPEG_LINK}" ]; then
                         mv ${current_data_directory}/ffmpeg ${FFMPEG_LINK}
                         ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
-                        chmod +x ${FFMPEG_LINK}/*/ffmpeg
-                        chmod +x ${FFMPEG_LINK}/*/ffprobe
+                        chmod 755 ${FFMPEG_LINK}/*/ffmpeg
+                        chmod 755 ${FFMPEG_LINK}/*/ffprobe
                     fi
                     
                     if [ -e "${current_data_directory}/ffmpeg" ]; then
