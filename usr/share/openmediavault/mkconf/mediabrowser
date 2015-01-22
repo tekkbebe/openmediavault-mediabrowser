@@ -111,6 +111,9 @@ EOF
 EOF
 
     chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
+    chmod 755 ${INSTALL_DIR}/libwebp/linux/libwebp.so.5.0.2
+    chmod 755 ${INSTALL_DIR}/osx/libmediainfo.dylib
+    chmod 755 ${INSTALL_DIR}/libsqlite3.0.dylib
 
     echo "Calling insserv..."
     insserv ${SERVICE}
