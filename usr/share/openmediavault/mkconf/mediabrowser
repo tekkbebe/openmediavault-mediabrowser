@@ -106,14 +106,13 @@ EOF
     echo "Creating sqlite3 config..."
     cat <<EOF > "${SQLITE3_CONF}"
 <configuration>
-  <dllmap dll="sqlite3" target="libsqlite3.0.dylib" os="osx"/>
+  <dllmap dll="sqlite3" target="libsqlite3.so" os="linux"/>
 </configuration>
 EOF
 
     chown -R ${RUN_AS}:${RUN_GRP} ${INSTALL_DIR}
     chmod 755 ${INSTALL_DIR}/libwebp/linux/libwebp.so.5.0.2
     chmod 755 ${INSTALL_DIR}/MediaInfo/osx/libmediainfo.dylib
-    chmod 755 ${INSTALL_DIR}/libsqlite3.0.dylib
 
     echo "Calling insserv..."
     insserv ${SERVICE}
