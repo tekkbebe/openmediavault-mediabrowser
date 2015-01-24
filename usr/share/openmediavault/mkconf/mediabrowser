@@ -161,6 +161,7 @@ case $2 in
                         ln -s ${FFMPEG_LINK} ${current_data_directory}/ffmpeg
                         chmod 755 ${FFMPEG_LINK}/*/ffmpeg
                         chmod 755 ${FFMPEG_LINK}/*/ffprobe
+                        chmod 755 ${FFMPEG_LINK}/*/fonts/ARIALUNI.TFF
                     fi
                     
                     if [ -e "${current_data_directory}/ffmpeg" ]; then
