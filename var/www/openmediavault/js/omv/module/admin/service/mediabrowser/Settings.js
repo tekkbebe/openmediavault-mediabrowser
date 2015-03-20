@@ -28,6 +28,9 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
     plugins      : [{
         ptype        : "linkedfields",
         correlations : [{
+            name        : [
+              "enable"
+            ],
             conditions  : [
                 { name : "enable", value : true }
             ],
