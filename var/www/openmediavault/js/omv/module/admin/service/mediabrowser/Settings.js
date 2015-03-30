@@ -96,7 +96,7 @@ Ext.define("OMV.module.admin.service.mediabrowser.Settings", {
             disabled : true,
             scope    : me,
             handler  : function() {
-				var link = 'http://' + location.hostname + ':8096/mediabrowser';
+				var link = 'https://' + location.hostname + ':8920/mediabrowser';
 				window.open(link, '_blank');
             }
         });
