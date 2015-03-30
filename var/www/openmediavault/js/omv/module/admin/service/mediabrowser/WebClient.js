@@ -26,7 +26,7 @@ Ext.define("OMV.module.admin.service.mediabrowser.WebClient", {
 
     initComponent : function() {
         var me = this;
-        var link = 'http://' + location.hostname + ':8096/mediabrowser';
+        var link = 'https://' + location.hostname + ':8920/mediabrowser';
 
         me.html = "<iframe src='" + link + "' width='100%' height='100%' />";
         me.callParent(arguments);
