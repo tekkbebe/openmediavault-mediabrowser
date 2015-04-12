@@ -12,7 +12,7 @@ case "$1" in
     configure)
         echo "Adding mediabrowser user..."
         if ! getent passwd mediabrowser >/dev/null 2>&1; then
-            useradd --create-home -g nogroup --no-user-group --shell /usr/sbin/nologin mediabrowser
+            useradd -g nogroup --no-user-group --shell /usr/sbin/nologin mediabrowser
             echo "...ok"
         else
             echo "[Warning] mediabrowser user already exists."
